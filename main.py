@@ -1,6 +1,7 @@
 from mutagen.flac import FLAC
 import os 
 import re
+import json
 def extract_flac_metadata(file_path):
     try:
         audio = FLAC(file_path)
@@ -16,30 +17,54 @@ def extract_flac_metadata(file_path):
         print("Error al extraer los metadatos:", e)
         return None
 
-def sort_by_album_art(folder_path, songs):
+def sort_by_album_art(folder_path):
+    songs = os.listdir(folder_path)
     for song in songs:
         if song.endswith(".flac"):
-            file_path = folder_path + "\\" + song
+            file_path = os.path.join(folder_path, song)
             metadata = extract_flac_metadata(file_path)
-            new_folder_path_art = folder_path + "\\" + re.findall(r"^\w+\s?\w*", metadata["artist"])[0]
-            new_folder_path_album = new_folder_path_art + "\\" + metadata["album"]
+            new_folder_path_art = os.path.join(folder_path, re.findall(r"^\w+\s?\w*", metadata["artist"])[0])
+            new_folder_path_album = os.path.join(new_folder_path_art, metadata["album"])
             if not os.path.exists(new_folder_path_art):
                 os.mkdir(new_folder_path_art)
             else:
                 if not os.path.exists(new_folder_path_album):
                     os.mkdir(new_folder_path_album)
                 else:
-                        try:
-                            os.rename(file_path, new_folder_path_album + "\\" + song )
-                        except PermissionError:
-                            print("El archivo " + song + " se esta usando por otra aplicación")
-                            print(song + " : \n" + folder_path + "- > " + new_folder_path_album)
+                    os.rename(file_path, os.path.join(new_folder_path_album, song))
+                        
 
-def move_songs(folder_path, new_folder_path):
-    folders = os.listdir(folder_path)
+def log_folders(folder_path):
+    log_path = os.path.join(folder_path, "music_log.json")
 
-new_folder_path = r"D:\Equipo\Musica"
-folder_path = r"D:\Equipo\Download\Telegram Desktop"
-songs = os.listdir(folder_path)
+    if os.path.exists(log_path):
+        os.remove(log_path)
 
-sort_by_album_art(folder_path, songs)
+    folder_log = {}
+    artists_folders = os.listdir(folder_path)
+
+    for artist_folder in artists_folders:
+        artist_folder_path = os.path.join(folder_path, artist_folder)
+        albums = os.listdir(artist_folder_path)
+        albums_dict = {}
+
+        for album in albums:
+            songs = os.listdir(os.path.join(artist_folder_path, album))
+            albums_dict[album] = songs
+        folder_log[artist_folder] = albums_dict
+
+    with open(log_path, "w") as json_file:
+        json.dump(folder_log, json_file, indent=4)
+
+    os.system(f'attrib +h "{log_path}"')
+    return folder_log
+
+def merge_folders(main_folder_path, source_folder_path):
+    main_log = log_folders(main_folder_path)
+    source_log = log_folders(source_folder_path)
+    
+main_folder_path = r"D:\Equipo\Documentos\Base de Datos\Trabajo\Proyectos Secundarios\2024 Music_Sorter\test\Music_Destination"
+source_folder_path = r"D:\Equipo\Documentos\Base de Datos\Trabajo\Proyectos Secundarios\2024 Music_Sorter\test\Music_Origin"
+sort_by_album_art(main_folder_path)
+
+# sort_by_album_art(folder_path, songs)
