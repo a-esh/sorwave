@@ -36,21 +36,7 @@ def sort_by_album_art(folder_path, songs):
                             print(song + " : \n" + folder_path + "- > " + new_folder_path_album)
 
 def move_songs(folder_path, new_folder_path):
-    try:
-        if not os.path.exists(new_folder_path):
-            os.makedirs(new_folder_path)
-        
-        for item in os.listdir(folder_path):
-            source_item = os.path.join(folder_path, item)
-            destination_item = os.path.join(new_folder_path, item)
-            os.rename(source_item, destination_item)
-        
-        os.rmdir(folder_path)
-        
-        print("La carpeta se ha movido correctamente.")
-    except Exception as e:
-        print("Error al mover la carpeta:", e)
-
+    folders = os.listdir(folder_path)
 
 new_folder_path = r"D:\Equipo\Musica"
 folder_path = r"D:\Equipo\Download\Telegram Desktop"
