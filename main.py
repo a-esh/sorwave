@@ -1,6 +1,6 @@
 import os 
 import re
-from metadata_extractor import extract_metadata
+from metadata_extractor import get_metadata
 from music_logger import generate_log
 from song_sorter import sort_path
 

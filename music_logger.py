@@ -1,6 +1,6 @@
 import os
 import json
-from metadata_extractor import extract_metadata
+from metadata_extractor import get_metadata
 
 def generate_log(folder_path, generate_log=True):
     song_log = {}
@@ -10,7 +10,7 @@ def generate_log(folder_path, generate_log=True):
         for file in files:
             if file.endswith('.flac') or file.endswith('.mp3'):
                 file_path = os.path.join(root, file)
-                song_metadata = extract_metadata(file_path)
+                song_metadata = get_metadata(file_path)
                 artist = song_metadata["artist"]
                 album = song_metadata["album"]
                 title = song_metadata["title"]
