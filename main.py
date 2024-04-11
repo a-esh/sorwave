@@ -10,4 +10,4 @@ def merge_folders(main_folder_path, source_folder_path):
     
 main_folder_path = r"D:\Equipo\Documentos\Base de Datos\Trabajo\Proyectos Secundarios\2024 Music_Sorter\test\Music_Destination"
 source_folder_path = r"D:\Equipo\Documentos\Base de Datos\Trabajo\Proyectos Secundarios\2024 Music_Sorter\test\Music_Origin"
-print(generate_log(main_folder_path, generate_log=True))
+generate_log(r"D:\Equipo\Musica", generate_log=True)
