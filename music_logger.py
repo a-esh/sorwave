@@ -77,6 +77,9 @@ def generate_log(folder_path, generate_log=True):
                         album = song_metadata["title"]
                         song_metadata["tracknumber"] = 1
 
+                    #Replace sidebars for visible routing problems
+                    album = album.replace("/", "-")
+
                     # Update song log with song information
                     if artist not in song_log:
                         song_log[artist] = {}
@@ -84,12 +87,13 @@ def generate_log(folder_path, generate_log=True):
                         song_log[artist][album] = []
                     song_log[artist][album].append({
                         "artist": song_metadata.get("artist"),
+                        "fixed_artist" : filter_artist(artist),
                         "albumartist" : song_metadata.get("albumartist"),
                         "title": song_metadata["title"],
                         "tracknumber": song_metadata["tracknumber"],
                         "genre": song_metadata.get("genre"),
                         "path": file_path,
-                        "extension": os.path.splitext(file_path)
+                        "extension": (os.path.splitext(file_path))[1]
                     })
 
     new_log(folder_path, song_log, bugs_log)
