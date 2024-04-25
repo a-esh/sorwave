@@ -4,54 +4,23 @@ import re
 import datetime
 from metadata_extractor import get_metadata
 
-def generate_log(folder_path, generate_log=True):
-    # Dictionary to store song information
-    song_log = {}
-    # Dictionary to store bugs information
-    bugs_log = {}
+def filter_artist(artist):
+    name_exceptions = ["Zion & Lennox","AC/DC", "Flamman & Abraxas"]
+
+    for exception in name_exceptions:
+        if exception in artist:
+            return exception
+
+    dividers = [",", "/", "Ft.", "feat.", "Feat", "&"]
+    for fix in dividers:
+        artist = artist.split(fix)[0].strip()
+
+    return artist
+
+def new_log(folder_path, song_log, bugs_log):
     # Path to the log file
     log_path = os.path.join(folder_path, "music_log.json")
-
-    # Walk through the folder path
-    for root, dirs, files in os.walk(folder_path):
-        for file in files:
-            # Check if the file is a FLAC or MP3 file
-            if file.endswith('.flac') or file.endswith('.mp3'):
-                file_path = os.path.join(root, file)
-                song_metadata = get_metadata(file_path)
-                # Check if metadata is available
-                if len(song_metadata.keys()) == 0:
-                    bugs_log["Metadata error"] = file_path
-                else:
-                    # Extract artist information
-                    try:
-                        artist = song_metadata["albumartist"]
-                    except KeyError:
-                        artist = song_metadata["artist"]
-                        if "/" in artist and artist != "AC/DC":
-                            artist = (artist.split("/"))[0]
-                            artist = (artist.split(","))[0]
-
-                    # Extract album information
-                    try:
-                        album = song_metadata["album"]
-                    except KeyError:
-                        album = song_metadata["title"]
-                        song_metadata["tracknumber"] = 1
-
-                    # Update song log with song information
-                    if artist not in song_log:
-                        song_log[artist] = {}
-                    if album not in song_log[artist]:
-                        song_log[artist][album] = []
-                    song_log[artist][album].append({
-                        "artist": song_metadata.get("artist"),
-                        "title": song_metadata["title"],
-                        "tracknumber": song_metadata["tracknumber"],
-                        "genre": song_metadata.get("genre"),
-                        "path": file_path
-                    })
-
+    
     # Log information including the current date and time
     log_info = {
         "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -75,5 +44,54 @@ def generate_log(folder_path, generate_log=True):
 
         # Hide the log file by setting it as a hidden file
         os.system(f'attrib +h "{log_path}"')
+
+def generate_log(folder_path, generate_log=True):
+    # Dictionary to store song information
+    song_log = {}
+    # Dictionary to store bugs information
+    bugs_log = {}
+
+    # Walk through the folder path
+    for root, dirs, files in os.walk(folder_path):
+        for file in files:
+            # Check if the file is a FLAC or MP3 file
+            if file.endswith('.flac') or file.endswith('.mp3'):
+                file_path = os.path.join(root, file)
+                song_metadata = get_metadata(file_path)
+                # Check if metadata is available
+                if len(song_metadata.keys()) == 0:
+                    bugs_log["Metadata error"] = file_path
+                else:
+                    # Extract artist information
+                    try:
+                        artist = song_metadata["albumartist"]
+                    except KeyError:
+                        artist = song_metadata["artist"]
+                    
+                    artist = filter_artist(artist)
+
+                    # Extract album information
+                    try:
+                        album = song_metadata["album"]
+                    except KeyError:
+                        album = song_metadata["title"]
+                        song_metadata["tracknumber"] = 1
+
+                    # Update song log with song information
+                    if artist not in song_log:
+                        song_log[artist] = {}
+                    if album not in song_log[artist]:
+                        song_log[artist][album] = []
+                    song_log[artist][album].append({
+                        "artist": song_metadata.get("artist"),
+                        "albumartist" : song_metadata.get("albumartist"),
+                        "title": song_metadata["title"],
+                        "tracknumber": song_metadata["tracknumber"],
+                        "genre": song_metadata.get("genre"),
+                        "path": file_path,
+                        "extension": os.path.splitext(file_path)
+                    })
+
+    new_log(folder_path, song_log, bugs_log)
 
     return song_log
