@@ -1,8 +1,7 @@
 import os
 import json
-import re
 import datetime
-from metadata_extractor import get_metadata
+from metadata_manager import get_metadata
 
 def filter_artist(artist):
     name_exceptions = ["Zion & Lennox","AC/DC", "Flamman & Abraxas"]
@@ -14,35 +13,30 @@ def filter_artist(artist):
     dividers = [",", "/", "Ft.", "feat.", "Feat", "&"]
     for fix in dividers:
         artist = artist.split(fix)[0].strip()
-
     return artist
 
-def new_log(folder_path, song_log, bugs_log):
+def new_log(folder_path, log_dict, log_type):
     # Path to the log file
-    log_path = os.path.join(folder_path, "music_log.json")
+
+    log_path = os.path.join(folder_path, "{}.json".format(log_type))
     
     # Log information including the current date and time
     log_info = {
         "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "bugs_log": bool(bugs_log)  # Indicate if there are any bugs logged
+        "type": log_type,
+        "data": log_dict
     }
 
     # Write logs to JSON file if log generation is enabled
-    if generate_log:
-        if os.path.exists(log_path):
-            os.remove(log_path)
-        with open(log_path, 'w', encoding='utf-8') as json_file:
-            if log_info:
-                json.dump(log_info, json_file, ensure_ascii=False, indent=4)
-                json_file.write('\n')  # Add a blank line between dictionaries
-            if bugs_log:
-                json.dump(bugs_log, json_file, ensure_ascii=False, indent=4)
-                json_file.write('\n')  # Add a blank line between dictionaries
-            if song_log:
-                json.dump(song_log, json_file, ensure_ascii=False, indent=4)
-                json_file.write('\n')
+    
+    if os.path.exists(log_path):
+        os.remove(log_path)
+    
+    with open(log_path, 'w', encoding='utf-8') as json_file:
+        json.dump(log_info, json_file, ensure_ascii=False, indent=4)
+        json_file.write('\n')  # Add a blank line between dictionaries
 
-        # Hide the log file by setting it as a hidden file
+    # Hide the log file by setting it as a hidden file
         os.system(f'attrib +h "{log_path}"')
 
 def generate_log(folder_path, generate_log=True):
@@ -87,15 +81,16 @@ def generate_log(folder_path, generate_log=True):
                         song_log[artist][album] = []
                     song_log[artist][album].append({
                         "artist": song_metadata.get("artist"),
-                        "fixed_artist" : filter_artist(artist),
                         "albumartist" : song_metadata.get("albumartist"),
                         "title": song_metadata["title"],
-                        "tracknumber": song_metadata["tracknumber"],
+                        "tracknumber": (str((song_metadata["tracknumber"])).split("/"))[0],
                         "genre": song_metadata.get("genre"),
                         "path": file_path,
                         "extension": (os.path.splitext(file_path))[1]
                     })
-
-    new_log(folder_path, song_log, bugs_log)
+    if generate_log:
+        new_log(folder_path, song_log, "songs_log")
+    if bugs_log:
+        new_log(folder_path, bugs_log, "metadataBugs_log")
 
     return song_log
