@@ -2,7 +2,7 @@ import os
 import json
 import re
 import datetime
-from metadata_extractor import get_metadata
+from metadata_manager import get_metadata
 
 def filter_artist(artist):
     name_exceptions = ["Zion & Lennox","AC/DC", "Flamman & Abraxas"]
@@ -17,30 +17,26 @@ def filter_artist(artist):
 
     return artist
 
-def new_log(folder_path, song_log, bugs_log):
+def new_log(folder_path, log_dict, log_type):
     # Path to the log file
-    log_path = os.path.join(folder_path, "music_log.json")
+
+    log_path = os.path.join(folder_path, "{}.json".format(log_type))
     
     # Log information including the current date and time
     log_info = {
         "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "bugs_log": bool(bugs_log)  # Indicate if there are any bugs logged
+        "type": log_type,
+        "data": log_dict
     }
 
     # Write logs to JSON file if log generation is enabled
     
     if os.path.exists(log_path):
         os.remove(log_path)
+    
     with open(log_path, 'w', encoding='utf-8') as json_file:
-        if log_info:
-            json.dump(log_info, json_file, ensure_ascii=False, indent=4)
-            json_file.write('\n')  # Add a blank line between dictionaries
-        if bugs_log:
-            json.dump(bugs_log, json_file, ensure_ascii=False, indent=4)
-            json_file.write('\n')  # Add a blank line between dictionaries
-        if song_log:
-            json.dump(song_log, json_file, ensure_ascii=False, indent=4)
-            json_file.write('\n')
+        json.dump(log_info, json_file, ensure_ascii=False, indent=4)
+        json_file.write('\n')  # Add a blank line between dictionaries
 
     # Hide the log file by setting it as a hidden file
         os.system(f'attrib +h "{log_path}"')
@@ -96,6 +92,8 @@ def generate_log(folder_path, generate_log=True):
                         "extension": (os.path.splitext(file_path))[1]
                     })
     if generate_log:
-        new_log(folder_path, song_log, bugs_log)
+        new_log(folder_path, song_log, "songs_log")
+    if bugs_log:
+        new_log(folder_path, bugs_log, "bugs_log")
 
     return song_log

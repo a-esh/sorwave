@@ -1,7 +1,9 @@
 import os 
 import re
-from metadata_extractor import get_metadata
+import datetime
+from metadata_manager import get_metadata
 from music_logger import generate_log
+from music_logger import new_log
 
 def sintaxis_filter(path):
     invalid_characters = '*?"<>|'  
@@ -9,6 +11,7 @@ def sintaxis_filter(path):
     return filtering_path
 
 def sort_songs(folder_path):
+    sorter_log = {}
     music_library = generate_log(folder_path, False)
     
     for fixed_artist, albums in music_library.items():
@@ -28,8 +31,12 @@ def sort_songs(folder_path):
 
                     elif not os.path.exists(song_path):
                         os.rename(song["path"], song_path)
+                        sorter_log[song["title"]]= [song["path"], song_path]
 
                     else:
-                        if "y" == input(print("La cancion {} esta duplicada, desea eliminarla? y/n".format(song["title"] ))):
+                        if "y" == input(print("La cancion {} esta duplicada, desea eliminarla? y/n".format(song["title"]))):
                             os.remove(song["path"])
+                            
+    new_log(r"logs\song_sorter.log", sorter_log, "sorter_log - {}".format(datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")))
     generate_log(folder_path)
+    
