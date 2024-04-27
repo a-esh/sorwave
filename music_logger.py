@@ -28,21 +28,21 @@ def new_log(folder_path, song_log, bugs_log):
     }
 
     # Write logs to JSON file if log generation is enabled
-    if generate_log:
-        if os.path.exists(log_path):
-            os.remove(log_path)
-        with open(log_path, 'w', encoding='utf-8') as json_file:
-            if log_info:
-                json.dump(log_info, json_file, ensure_ascii=False, indent=4)
-                json_file.write('\n')  # Add a blank line between dictionaries
-            if bugs_log:
-                json.dump(bugs_log, json_file, ensure_ascii=False, indent=4)
-                json_file.write('\n')  # Add a blank line between dictionaries
-            if song_log:
-                json.dump(song_log, json_file, ensure_ascii=False, indent=4)
-                json_file.write('\n')
+    
+    if os.path.exists(log_path):
+        os.remove(log_path)
+    with open(log_path, 'w', encoding='utf-8') as json_file:
+        if log_info:
+            json.dump(log_info, json_file, ensure_ascii=False, indent=4)
+            json_file.write('\n')  # Add a blank line between dictionaries
+        if bugs_log:
+            json.dump(bugs_log, json_file, ensure_ascii=False, indent=4)
+            json_file.write('\n')  # Add a blank line between dictionaries
+        if song_log:
+            json.dump(song_log, json_file, ensure_ascii=False, indent=4)
+            json_file.write('\n')
 
-        # Hide the log file by setting it as a hidden file
+    # Hide the log file by setting it as a hidden file
         os.system(f'attrib +h "{log_path}"')
 
 def generate_log(folder_path, generate_log=True):
@@ -95,7 +95,7 @@ def generate_log(folder_path, generate_log=True):
                         "path": file_path,
                         "extension": (os.path.splitext(file_path))[1]
                     })
-
-    new_log(folder_path, song_log, bugs_log)
+    if generate_log:
+        new_log(folder_path, song_log, bugs_log)
 
     return song_log
