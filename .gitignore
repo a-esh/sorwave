@@ -8,7 +8,7 @@ env/
 *.env
 
 # Local Configuration Files
-secrets.py
+secrets_1.py
 config.py
 local.py
 test*

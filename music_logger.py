@@ -1,6 +1,5 @@
 import os
 import json
-import re
 import datetime
 from metadata_manager import get_metadata
 
@@ -14,7 +13,6 @@ def filter_artist(artist):
     dividers = [",", "/", "Ft.", "feat.", "Feat", "&"]
     for fix in dividers:
         artist = artist.split(fix)[0].strip()
-
     return artist
 
 def new_log(folder_path, log_dict, log_type):
@@ -83,10 +81,9 @@ def generate_log(folder_path, generate_log=True):
                         song_log[artist][album] = []
                     song_log[artist][album].append({
                         "artist": song_metadata.get("artist"),
-                        "fixed_artist" : filter_artist(artist),
                         "albumartist" : song_metadata.get("albumartist"),
                         "title": song_metadata["title"],
-                        "tracknumber": song_metadata["tracknumber"],
+                        "tracknumber": (str((song_metadata["tracknumber"])).split("/"))[0],
                         "genre": song_metadata.get("genre"),
                         "path": file_path,
                         "extension": (os.path.splitext(file_path))[1]
@@ -94,6 +91,6 @@ def generate_log(folder_path, generate_log=True):
     if generate_log:
         new_log(folder_path, song_log, "songs_log")
     if bugs_log:
-        new_log(folder_path, bugs_log, "bugs_log")
+        new_log(folder_path, bugs_log, "metadataBugs_log")
 
     return song_log
