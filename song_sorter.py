@@ -61,7 +61,7 @@ def sort_songs(folder_path):
                             os.remove(song["path"])
                             
     remove_empty_folders(folder_path)
-    new_log(r"logs\song_sorter.log", sorter_log, f"sorter_log - {datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")}")
+    new_log(r"logs\song_sorter.log", sorter_log, f"sorter_log - {datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}")
     generate_log(folder_path)
     
     
