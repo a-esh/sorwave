@@ -6,7 +6,7 @@ from music_logger import new_log
 def sintaxis_filter(path):
     unit = path[:2]
     path = path[2:]
-    invalid_characters = '*?"<>|:'  
+    invalid_characters = '*?"<>|:/'  
     filtering_path = ''.join(caracter for caracter in path if caracter not in invalid_characters)
     return unit + filtering_path
 
@@ -61,7 +61,7 @@ def sort_songs(folder_path):
                             os.remove(song["path"])
                             
     remove_empty_folders(folder_path)
-    new_log(r"logs\song_sorter.log", sorter_log, f"sorter_log - {datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")}")
+    new_log(r"logs\song_sorter.log", sorter_log, f"sorter_log - {datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}")
     generate_log(folder_path)
     
     
