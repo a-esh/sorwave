@@ -6,7 +6,7 @@ from music_logger import new_log
 def sintaxis_filter(path):
     unit = path[:2]
     path = path[2:]
-    invalid_characters = '*?"<>|:'  
+    invalid_characters = '*?"<>|:/'  
     filtering_path = ''.join(caracter for caracter in path if caracter not in invalid_characters)
     return unit + filtering_path
 
