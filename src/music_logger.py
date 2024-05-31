@@ -39,7 +39,7 @@ def new_log(folder_path, log_dict, log_type):
     # Hide the log file by setting it as a hidden file
         os.system(f'attrib +h "{log_path}"')
 
-def generate_log(folder_path, generate_log=True):
+def gen_log(folder_path, gen_log=True):
     # Dictionary to store song information
     song_log = {}
     # Dictionary to store bugs information
@@ -88,7 +88,7 @@ def generate_log(folder_path, generate_log=True):
                         "path": file_path,
                         "extension": (os.path.splitext(file_path))[1]
                     })
-    if generate_log:
+    if gen_log:
         new_log(folder_path, song_log, "songs_log")
     if bugs_log:
         new_log(folder_path, bugs_log, "metadataBugs_log")
