@@ -7,13 +7,12 @@ setup(
     name="sorwave",
     version="0.0.1",
     author="a-esh",
-    author_email="abrahamescalona@gmail.com",
+    author_email="abrahamescalona@live.com",
     description="Music Sorter based on Python",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/a-esh/sorwave",
-    packages=find_packages(where="sorwave"),
-    package_dir={"": "sorwave"},
+    packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",
@@ -22,7 +21,6 @@ setup(
     python_requires=">=3.6", 
     install_requires=[
         "requests>=2.25.1",
-        "pandas>=1.2.3",
         "mutagen>=1.45.1"
     ],
     entry_points={  
