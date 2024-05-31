@@ -20,7 +20,7 @@ logs/
 # Build and distribution files
 /dist/
 /build/
-Muisc_Sorter.egg-info/
+sorwave.egg-info/
 
 # Dependency and environment files
 /.venv/
