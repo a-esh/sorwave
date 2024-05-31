@@ -2,6 +2,7 @@
 # Sorwave
 
 Sorwave es un potente clasificador de música basado en Python. Utiliza las bibliotecas `mutagen` y `requests` para gestionar metadatos y realizar otras operaciones relacionadas con archivos de música. Este proyecto está diseñado para ayudar a los usuarios a organizar y gestionar su colección de música de manera eficiente.
+https://pypi.org/project/sorwave/
 
 ## Tabla de Contenidos
 
@@ -168,4 +169,3 @@ Email: [abrahamescalona@live.com](mailto:abrahamescalona@live.com)
 ## Comunidad
 
 [![Discord](https://img.shields.io/badge/Discord-Canal_de_la_comunidad-5865F2?style=for-the-badge&logo=discord&logoColor=white&labelColor=101010)](https://discord.gg/eh7BFDB)
-```
