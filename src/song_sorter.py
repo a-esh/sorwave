@@ -1,6 +1,6 @@
 import os 
 import datetime
-from music_logger import generate_log
+from music_logger import gen_log
 from music_logger import new_log
 
 def sintaxis_filter(path):
@@ -33,9 +33,10 @@ def remove_empty_folders(path):
     if not os.listdir(path):
         os.rmdir(path)
         print(f"Empty directory removed: {path}")
+
 def sort_songs(folder_path):
     sorter_log = {}
-    music_library = generate_log(folder_path, False)
+    music_library = gen_log(folder_path, False)
     
     for fixed_artist, albums in music_library.items():
         artist_path = os.path.join(folder_path, fixed_artist.replace("/", "-"))
@@ -62,6 +63,6 @@ def sort_songs(folder_path):
                             
     remove_empty_folders(folder_path)
     new_log(r"logs\song_sorter.log", sorter_log, f"sorter_log - {datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}")
-    generate_log(folder_path)
+    gen_log(folder_path)
     
     
