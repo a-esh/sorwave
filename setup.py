@@ -4,14 +4,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="SongManager",
+    name="sorwave",
     version="0.0.1",
     author="a-esh",
     author_email="abrahamescalona@gmail.com",
     description="Music Sorter based on Python",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/a-esh/SongManager",
+    url="https://github.com/a-esh/sorwave",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     classifiers=[
@@ -27,7 +27,7 @@ setup(
     ],
     entry_points={  
         "console_scripts": [
-            "SongManager=src.main:main",
+            "sorwave=src.main:main",
         ],
     },
     include_package_data=True,
