@@ -12,8 +12,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/a-esh/sorwave",
-    packages=find_packages(where="src"),
-    package_dir={"": "src"},
+    packages=find_packages(where="sorwave"),
+    package_dir={"": "sorwave"},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",
@@ -27,7 +27,7 @@ setup(
     ],
     entry_points={  
         "console_scripts": [
-            "sorwave=src.main:main",
+            "sorwave=sorwave.main:main",
         ],
     },
     include_package_data=True,
