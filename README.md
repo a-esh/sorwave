@@ -30,8 +30,6 @@ Sorwave es un potente clasificador de música basado en Python. Utiliza las bibl
   - [Contacto](#contacto)
   - [Redes](#redes)
   - [Comunidad](#comunidad)
-    - [Descripción de las Secciones](#descripción-de-las-secciones)
-    - [Pasos Siguientes](#pasos-siguientes)
 
 ## Descripción
 
@@ -171,24 +169,3 @@ Email: [abrahamescalona@live.com](mailto:abrahamescalona@live.com)
 
 [![Discord](https://img.shields.io/badge/Discord-Canal_de_la_comunidad-5865F2?style=for-the-badge&logo=discord&logoColor=white&labelColor=101010)](https://discord.gg/eh7BFDB)
 ```
-
-### Descripción de las Secciones
-
-- **Descripción:** Una introducción más detallada sobre el propósito y las capacidades de Sorwave.
-- **Instalación:** Instrucciones claras sobre cómo instalar el paquete.
-- **Uso:** Instrucciones detalladas sobre cómo ejecutar el script principal, importar y usar el paquete, y ejemplos de uso básicos y avanzados.
-- **Características:** Lista de las principales características del paquete.
-- **Contribuir:** Instrucciones para contribuir al desarrollo del proyecto.
-- **Roadmap:** Lista de futuras mejoras y características planeadas.
-- **Preguntas Frecuentes:** Respuestas a preguntas comunes sobre el proyecto.
-- **Licencia:** Información sobre la licencia del proyecto.
-- **Contacto:** Información de contacto del autor.
-- **Redes:** Insignias y enlaces a tus perfiles en redes sociales y plataformas de transmisión.
-- **Comunidad:** Insignia y enlace a tu canal de Discord.
-
-### Pasos Siguientes
-
-1. **Personaliza las secciones según sea necesario, añadiendo o eliminando información relevante para tu proyecto.**
-2. **Guarda el archivo `README.md` en la raíz de tu repositorio.**
-
-Este `README.md` debería proporcionar a los usuarios y desarrolladores una comprensión clara y detallada de tu proyecto, cómo instalarlo, cómo usarlo, y cómo contribuir, además de ofrecer enlaces a tus perfiles y comunidad en línea.
