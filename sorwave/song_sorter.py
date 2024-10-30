@@ -1,7 +1,6 @@
 import os 
 import datetime
-from music_logger import gen_log
-from music_logger import new_log
+from music_logger import gen_log, new_log
 
 def sintaxis_filter(path):
     unit = path[:2]
@@ -55,14 +54,15 @@ def sort_songs(folder_path):
 
                     elif not os.path.exists(song_path):
                         os.rename(song["path"], song_path)
-                        sorter_log[song["title"]]= [song["path"], song_path]
+                        sorter_log[song["title"]] = [song["path"], song_path]
 
                     else:
-                        if "y" == input(print("La cancion {} esta duplicada, desea eliminarla? y/n \n {} -> {}".format(song["title"],song["path"], song_path))):
-                            os.remove(song["path"])
+                        new_song_path = sintaxis_filter(os.path.join(album_path, ("{}. {} (duplicate){}".format(song["tracknumber"], song["title"], song["extension"]))))
+                        os.rename(song["path"], new_song_path)
+                        sorter_log[song["title"] + " (duplicate)"] = [song["path"], new_song_path]
                             
     remove_empty_folders(folder_path)
-    new_log(r"logs\song_sorter.log", sorter_log, f"sorter_log - {datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}")
+    new_log((folder_path), sorter_log, f"sorter_log - {datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}")
     gen_log(folder_path)
     
     

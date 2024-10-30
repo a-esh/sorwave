@@ -1,5 +1,6 @@
 from mutagen.flac import FLAC
 from mutagen.easyid3 import EasyID3
+from mutagen.aac import ACC
 import os
 
 file_extensions = {".flac": FLAC, ".mp3": EasyID3}
