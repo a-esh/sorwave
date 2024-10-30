@@ -1,26 +1,52 @@
+import os
 from mutagen.flac import FLAC
 from mutagen.easyid3 import EasyID3
-from mutagen.aac import ACC
-import os
+from musicbrainzngs_API import set_useragent
+import musicbrainzngs
 
 file_extensions = {".flac": FLAC, ".mp3": EasyID3}
 
+def get_file_extension(file_path):
+    return os.path.splitext(file_path)[-1].lower()
+
 def get_metadata(file_path):
-    file_extension = os.path.splitext(file_path)[-1].lower()
+    try:
+        ext = get_file_extension(file_path)
+        if ext in file_extensions:
+            audio = file_extensions[ext](file_path)
+            return {key: value[0] for key, value in audio.items()}
+    except Exception as e:
+        print("Error extracting metadata:", e)
+    return None
 
-    if file_extension in file_extensions:
+def repair_metadata(file_path):
+    """
+    Repairs the metadata of an audio file using the MusicBrainz database.
+    """
+    set_useragent()
+    file_name = os.path.splitext(os.path.basename(file_path))[0]
 
-        try:
-            if file_extension in file_extensions:
-                class_extension = file_extensions[file_extension]
-                audio = class_extension(file_path)
-                metadata = {}
-                for key, value in audio.items():
-                        metadata[key] = value[0]
-                return metadata
-        except Exception as e:
-            print("Error al extraer los metadatos:", e)
-            return None
-    else:
-        print("Extensión de archivo no compatible:", file_extension)
-        return None
+    try:
+        result = musicbrainzngs.search_recordings(recording=file_name, limit=1)
+        
+        if result['recording-list']:
+            recording = result['recording-list'][0]
+            metadata = {
+            'title': recording['title'],
+            'artist': recording['artist-credit'][0]['artist']['name'],
+            'album': recording['release-list'][0]['title'] if 'release-list' in recording else None,
+            'genre': recording['tag-list'][0]['name'] if 'tag-list' in recording else None,
+            'tracknumber': recording['medium-list'][0]['track-list'][0]['number'] if 'medium-list' in recording else None,
+            'albumartist': recording['artist-credit'][0]['artist']['name'] if 'artist-credit' in recording else None
+            }
+            
+            ext = get_file_extension(file_path)
+            audio = file_extensions[ext](file_path)
+            
+            for key, value in metadata.items():
+                if value:
+                    audio[key] = value
+            
+            audio.save()
+    except Exception as e:
+        print("Error updating metadata:", e)
