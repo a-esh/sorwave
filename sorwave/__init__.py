@@ -1,2 +1,3 @@
-from song_sorter import sort_songs
-from music_logger import gen_log
+from sorwave.sorter import *
+from sorwave.logger import *
+from sorwave.metadata_manager import *

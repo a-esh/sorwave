@@ -1,6 +1,6 @@
 import os 
 import datetime
-from music_logger import gen_log, new_log
+from sorwave.logger import gen_log, new_log
 
 def sintaxis_filter(path):
     unit = path[:2]
