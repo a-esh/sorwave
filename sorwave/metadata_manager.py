@@ -1,7 +1,7 @@
 import os
 from mutagen.flac import FLAC
 from mutagen.easyid3 import EasyID3
-from musicbrainzngs_API import set_useragent
+from .musicbrainzngs_API import set_useragent
 import musicbrainzngs
 
 file_extensions = {".flac": FLAC, ".mp3": EasyID3}
@@ -9,14 +9,18 @@ file_extensions = {".flac": FLAC, ".mp3": EasyID3}
 def get_file_extension(file_path):
     return os.path.splitext(file_path)[-1].lower()
 
-def get_metadata(file_path):
+def get_metadata(file_path,repair = False):
     try:
         ext = get_file_extension(file_path)
         if ext in file_extensions:
             audio = file_extensions[ext](file_path)
             return {key: value[0] for key, value in audio.items()}
     except Exception as e:
-        print("Error extracting metadata:", e)
+        if repair:
+            repair_metadata(file_path)
+            get_metadata(file_path, False)
+        else:
+            print("Error extracting metadata:", e)
     return None
 
 def repair_metadata(file_path):
