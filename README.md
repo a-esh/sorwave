@@ -1,171 +1,172 @@
-
+*
 # Sorwave
 
-Sorwave es un potente clasificador de música basado en Python. Utiliza las bibliotecas `mutagen` y `requests` para gestionar metadatos y realizar otras operaciones relacionadas con archivos de música. Este proyecto está diseñado para ayudar a los usuarios a organizar y gestionar su colección de música de manera eficiente.
+Sorwave is a powerful music classifier based on Python. It uses the `mutagen` libraries and `musicbrainzngs` API to manage metadata and perform other music file-related operations. This project is designed to help users efficiently organize and manage their music collection.
 https://pypi.org/project/sorwave/
 
-## Tabla de Contenidos
+## Table of Contents
 
 - [Sorwave](#sorwave)
-  - [Tabla de Contenidos](#tabla-de-contenidos)
-  - [Descripción](#descripción)
-  - [Instalación](#instalación)
-  - [Funciones](#funciones)
+  - [Table of Contents](#table-of-contents)
+  - [Description](#description)
+  - [Installation](#installation)
+  - [Functions](#functions)
     - [`get_metadata`](#get_metadata)
-      - [Ejemplo de Uso](#ejemplo-de-uso)
+      - [Usage Example](#usage-example)
     - [`gen_log`](#gen_log)
-      - [Ejemplo de Uso](#ejemplo-de-uso-1)
+      - [Usage Example](#usage-example-1)
     - [`new_log`](#new_log)
-      - [Ejemplo de Uso](#ejemplo-de-uso-2)
+      - [Usage Example](#usage-example-2)
     - [`filter_artist`](#filter_artist)
-      - [Ejemplo de Uso](#ejemplo-de-uso-3)
+      - [Usage Example](#usage-example-3)
     - [`sort_songs`](#sort_songs)
-      - [Ejemplo de Uso](#ejemplo-de-uso-4)
-  - [Características](#características)
-  - [Contribuir](#contribuir)
+      - [Usage Example](#usage-example-4)
+  - [Features](#features)
+  - [Contributing](#contributing)
   - [Roadmap](#roadmap)
-  - [Preguntas Frecuentes](#preguntas-frecuentes)
-    - [¿Qué formatos de archivos de música son compatibles?](#qué-formatos-de-archivos-de-música-son-compatibles)
-    - [¿Cómo puedo reportar un problema o solicitar una nueva característica?](#cómo-puedo-reportar-un-problema-o-solicitar-una-nueva-característica)
-  - [Licencia](#licencia)
-  - [Contacto](#contacto)
-  - [Redes](#redes)
-  - [Comunidad](#comunidad)
+  - [FAQ](#faq)
+    - [What music file formats are supported?](#what-music-file-formats-are-supported)
+    - [How can I report an issue or request a new feature?](#how-can-i-report-an-issue-or-request-a-new-feature)
+  - [License](#license)
+  - [Contact](#contact)
+  - [Social Media](#social-media)
+  - [Community](#community)
 
-## Descripción
+## Description
 
-Sorwave permite a los usuarios organizar su biblioteca de música automáticamente mediante la gestión de metadatos y la clasificación de archivos. Esta herramienta es especialmente útil para quienes desean mantener sus colecciones de música ordenadas sin esfuerzo manual.
+Sorwave allows users to automatically organize their music library by managing metadata and classifying files. This tool is especially useful for those who want to keep their music collections organized without manual effort.
 
-## Instalación
+## Installation
 
-Puedes instalar Sorwave desde PyPI usando `pip`:
+You can install Sorwave from PyPI using `pip`:
 
 ```bash
 pip install sorwave
 ```
 
-## Funciones
+## Functions
 
 ### `get_metadata`
 
 ```python
-from sorwave import get_metadata
+import sorwave as sw
 ```
 
-Esta función extrae metadatos de una canción cuando se le proporciona la ruta del archivo.
+This function extracts metadata from a song when provided with the file path.
 
-#### Ejemplo de Uso
+#### Usage Example
 
 ```python
-metadata = get_metadata("ruta/a/tu/cancion.mp3")
+metadata = sw.get_metadata(r"path/to/your/song.mp3")
 print(metadata)
 ```
 
 ### `gen_log`
 
 ```python
-from sorwave import gen_log
+import sorwave as sw
 ```
 
-Esta función genera un log en el directorio principal de todas las canciones y canciones que hay en los subdirectorios. Guarda un archivo JSON con los metadatos de cada canción organizados por artista, álbumes y canciones en orden.
+This function generates a log in the main directory of all the songs and songs in the subdirectories. It saves a JSON file with the metadata of each song organized by artist, albums, and songs in order.
 
-#### Ejemplo de Uso
+#### Usage Example
 
 ```python
-gen_log("ruta/a/tu/carpeta/de/musica")
+sw.gen_log(r"path/to/your/music/folder")
 ```
 
 ### `new_log`
 
 ```python
-from sorwave import new_log
+import sorwave as sw
 ```
 
-Esta función se puede utilizar para crear un nuevo log de actividades o eventos específicos en el sistema de gestión de música.
+This function can be used to create a new log of specific activities or events in the music management system.
 
-#### Ejemplo de Uso
+#### Usage Example
 
 ```python
-new_log("Descripción del evento o actividad")
+sw.new_log("Description of the event or activity")
 ```
 
 ### `filter_artist`
 
 ```python
-from sorwave import filter_artist
+import sorwave as sw
 ```
 
-Esta función filtra los nombres de los artistas para que sean compatibles con las rutas de Windows sin que pierdan sentido los nombres.
+This function filters artist names to be compatible with Windows paths without losing the meaning of the names.
 
-#### Ejemplo de Uso
+#### Usage Example
 
 ```python
-artista = "Nombre: del*Artista?"
-artista_filtrado = filter_artist(artista)
-print(artista_filtrado)  # Salida: Nombre_del_Artista
+artist = "Name: of*Artist?"
+filtered_artist = sw.filter_artist(artist)
+print(filtered_artist)  # Output: Name_of_Artist
 ```
 
 ### `sort_songs`
 
 ```python
-from sorwave import sort_songs
+import sorwave as sw
 ```
 
-Esta función organiza la música en sus respectivas carpetas y subcarpetas (artistas, álbumes y canciones)
+This function organizes music into their respective folders and subfolders (artists, albums, and songs).
 
-#### Ejemplo de Uso
+#### Usage Example
 
 ```python
-sort_songs("ruta/a/tu/carpeta/de/musica")
+sw.sort_songs(r"path/to/your/music/folder")
 ```
 
-## Características
+## Features
 
-- **Gestión de Metadatos:** Usa `mutagen` para leer y escribir metadatos en archivos de música.
-- **Clasificación de Canciones:** Clasifica canciones basadas en diferentes criterios.
-- **Registro de Actividades:** Mantén un registro de las actividades relacionadas con la gestión de la música.
-- **Interfaz de Línea de Comandos:** Ejecuta y gestiona tareas directamente desde la línea de comandos.
+- **Metadata Management:** Uses `mutagen` to read and write metadata in music files.
+- **Song Classification:** Classifies songs based on different criteria.
+- **Activity Logging:** Keeps a log of activities related to music management.
+- **Command Line Interface:** Run and manage tasks directly from the command line.
 
-## Contribuir
+## Contributing
 
-¡Las contribuciones son bienvenidas! Si deseas contribuir, por favor sigue estos pasos:
+Contributions are welcome! If you want to contribute, please follow these steps:
 
-1. Haz un fork del repositorio.
-2. Crea una nueva rama (`git checkout -b feature/nueva-caracteristica`).
-3. Realiza tus cambios y haz commit (`git commit -am 'Añadir nueva característica'`).
-4. Haz push a la rama (`git push origin feature/nueva-caracteristica`).
-5. Abre un Pull Request.
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/new-feature`).
+3. Make your changes and commit them (`git commit -am 'Add new feature'`).
+4. Push to the branch (`git push origin feature/new-feature`).
+5. Open a Pull Request.
 
 ## Roadmap
 
-- [ ] Añadir soporte para más formatos de archivos de música.
-- [ ] Mejorar la documentación con más ejemplos y tutoriales.
-- [ ] Integración con servicios de música en línea para metadatos automáticos.
+- [ ] Add support for more music file formats.
+- [ ] Improve documentation with more examples and tutorials.
+- [X] Integration with online music services for automatic metadata.
 
-## Preguntas Frecuentes
+## FAQ
 
-### ¿Qué formatos de archivos de música son compatibles?
+### What music file formats are supported?
 
-Actualmente, Sorwave soporta archivos MP3 y FLAC. Estamos trabajando para añadir soporte para más formatos en futuras versiones.
+Currently, Sorwave supports MP3 and FLAC files. We are working to add support for more formats in future versions.
 
-### ¿Cómo puedo reportar un problema o solicitar una nueva característica?
+### How can I report an issue or request a new feature?
 
-Puedes abrir un [issue en GitHub](https://github.com/A-esh/sorwave/issues) para reportar problemas o solicitar nuevas características.
+You can open an [issue on GitHub](https://github.com/A-esh/sorwave/issues) to report problems or request new features.
 
-## Licencia
+## License
 
-Este proyecto está bajo la Licencia Apache 2.0. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+This project is licensed under the Apache 2.0 License. See the [LICENSE](LICENSE) file for more details.
 
-## Contacto
+## Contact
 
-Autor: a-esh  
+Author: a-esh  
 Email: [abrahamescalona@live.com](mailto:abrahamescalona@live.com)
 
-## Redes
+## Social Media
 
-[![GitHub](https://img.shields.io/badge/GitHub-Mi_perfil-5B47ED?style=for-the-badge&logo=github&logoColor=white&labelColor=101010)](https://github.com/A-esh) [![Linkedin](https://img.shields.io/badge/Linkedin-Perfil_Profesional-2867B2?style=for-the-badge&logo=linkedin&logoColor=white&labelColor=101010)](https://www.linkedin.com/in/abraham-esh/)
+[![GitHub](https://img.shields.io/badge/GitHub-My_Profile-5B47ED?style=for-the-badge&logo=github&logoColor=white&labelColor=101010)](https://github.com/A-esh) [![Linkedin](https://img.shields.io/badge/Linkedin-Professional_Profile-2867B2?style=for-the-badge&logo=linkedin&logoColor=white&labelColor=101010)](https://www.linkedin.com/in/abraham-esh/)
 [![X](https://img.shields.io/badge/Twitter-X-000000?style=for-the-badge&logo=x&logoColor=white&labelColor=101010)](https://twitter.com/abraham_esh)
 
-## Comunidad
+## Community
 
-[![Discord](https://img.shields.io/badge/Discord-Canal_de_la_comunidad-5865F2?style=for-the-badge&logo=discord&logoColor=white&labelColor=101010)](https://discord.gg/eh7BFDB)
+[![Discord](https://img.shields.io/badge/Discord-Community_Channel-5865F2?style=for-the-badge&logo=discord&logoColor=white&labelColor=101010)](https://discord.gg/eh7BFDB)
+*
