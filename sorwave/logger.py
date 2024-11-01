@@ -1,7 +1,7 @@
 import os
 import json
 import datetime
-from metadata_manager import get_metadata
+from .metadata_manager import get_metadata
 
 def filter_artist(artist):
     with open('artist_exceptions.json', 'r', encoding='utf-8') as f:
