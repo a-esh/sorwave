@@ -1,6 +1,6 @@
 import os 
 import datetime
-from sorwave.logger import gen_log, new_log
+from sorwave.logger import gen_log, new_log_file
 
 def sintaxis_filter(path):
     unit = path[:2]
@@ -21,21 +21,30 @@ def remove_empty_folders(path):
                 try:
                     for file_name in os.listdir(full_path):
                         file_path = os.path.join(full_path, file_name)
-                        os.remove(file_path)
+                        try:
+                            os.remove(file_path)
+                        except PermissionError:
+                            os.chmod(file_path, 0o777)
+                            os.remove(file_path)
                     
                     # Remove the directory itself
-                    os.rmdir(full_path)
-                except PermissionError: 
-                    print(f"Faltan permisos para {full_path}")
+                    try:
+                        os.rmdir(full_path)
+                    except PermissionError:
+                        os.chmod(full_path, 0o777)
+                        os.rmdir(full_path)
+                        
+                except PermissionError:
+                    print(f"Missing permissions for {full_path}")
 
     # Check if the current directory is empty
     if not os.listdir(path):
         os.rmdir(path)
         print(f"Empty directory removed: {path}")
 
-def sort_songs(folder_path):
+def sort_songs(folder_path, use_api=True):
     sorter_log = {}
-    music_library = gen_log(folder_path, False)
+    music_library = gen_log(folder_path, use_api, False)
     
     for fixed_artist, albums in music_library.items():
         artist_path = os.path.join(folder_path, fixed_artist.replace("/", "-"))
@@ -62,7 +71,7 @@ def sort_songs(folder_path):
                         sorter_log[song["title"] + " (duplicate)"] = [song["path"], new_song_path]
                             
     remove_empty_folders(folder_path)
-    new_log((folder_path), sorter_log, f"sorter_log - {datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}")
-    gen_log(folder_path)
+    new_log_file((folder_path), sorter_log, f"sorter_log - {datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}")
+    gen_log(folder_path, use_api, True)
     
     

@@ -25,7 +25,7 @@ def filter_artist(artist, title = None, use_api= False):
             artist = artist.split(fix)[0].strip()
     return artist
 
-def new_log(folder_path, log_dict, log_type):
+def new_log_file(folder_path, log_dict, log_type):
     log_path = os.path.join(folder_path, f"{log_type}.json")
     log_info = {
         "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -43,7 +43,7 @@ def new_log(folder_path, log_dict, log_type):
     if os.name == 'nt':
         os.system(f'attrib +h "{log_path}"')
 
-def gen_log(folder_path, gen_log=True):
+def gen_log(folder_path, use_api=True, gen_log=True):
     song_log = {}
     bugs_log = {}
 
@@ -56,7 +56,7 @@ def gen_log(folder_path, gen_log=True):
                     bugs_log["Metadata error"] = file_path
                 else:
                     artist = song_metadata.get("albumartist", song_metadata.get("artist"))
-                    artist = filter_artist(artist)
+                    artist = filter_artist(artist, song_metadata["title"], use_api)
                     album = song_metadata.get("album", song_metadata.get("title"))
                     album = album.replace("/", "-")
                     song_metadata["tracknumber"] = song_metadata.get("tracknumber", 1)
@@ -76,8 +76,8 @@ def gen_log(folder_path, gen_log=True):
                     })
 
     if gen_log:
-        new_log(folder_path, song_log, "songs_log")
+        new_log_file(folder_path, song_log, "songs_log")
     if bugs_log:
-        new_log(folder_path, bugs_log, "metadataBugs_log")
+        new_log_file(folder_path, bugs_log, "metadataBugs_log")
 
     return song_log
