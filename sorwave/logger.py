@@ -2,18 +2,27 @@ import os
 import json
 import datetime
 from .metadata_manager import get_metadata
+from .musicbrainzngs_API import set_useragent
+import musicbrainzngs
 
-def filter_artist(artist):
-    with open('artist_exceptions.json', 'r', encoding='utf-8') as f:
-        name_exceptions = json.load(f)
-
-    for exception in name_exceptions:
-        if exception in artist:
-            return exception
-
-    dividers = [",", "/", "Ft.", "feat.", "Feat", "&"]
-    for fix in dividers:
-        artist = artist.split(fix)[0].strip()
+def filter_artist(artist, title = None, use_api= False):
+    if use_api:
+        set_useragent()
+        try:
+            if title:
+                result = musicbrainzngs.search_recordings(artist=artist, recording=title, limit=1)
+                if result['recording-list']:
+                    artist = result['recording-list'][0]['artist-credit'][0]['artist']['name']
+            else:
+                result = musicbrainzngs.search_artists(artist=artist, limit=1)
+                if result['artist-list']:
+                    artist = result['artist-list'][0]['name']
+        except musicbrainzngs.WebServiceError as e:
+            print(f"MusicBrainz API error: {e}")
+    else:
+        dividers = [",", "/", "Ft.", "feat.", "Feat", "&"]
+        for fix in dividers:
+            artist = artist.split(fix)[0].strip()
     return artist
 
 def new_log(folder_path, log_dict, log_type):
