@@ -44,7 +44,7 @@ def new_log_file(folder_path, log_dict, log_type):
     if os.name == 'nt':
         os.system(f'attrib +h "{log_path}"')
 
-def gen_log(folder_path, use_api=True, gen_log=True):
+def gen_log(folder_path, use_api=False, gen_log=True):
     song_log = {}
     bugs_log = {}
     
@@ -67,6 +67,10 @@ def gen_log(folder_path, use_api=True, gen_log=True):
                     album = album.replace("/", "-")
                     song_metadata["tracknumber"] = song_metadata.get("tracknumber", 1)
 
+                    # Add "Modified by sorwave" tag to metadata
+                    if use_api:
+                        song_metadata["modified_by"] = "sorwave"
+
                     if artist not in song_log:
                         song_log[artist] = {}
                     if album not in song_log[artist]:
@@ -78,7 +82,8 @@ def gen_log(folder_path, use_api=True, gen_log=True):
                         "tracknumber": str(song_metadata["tracknumber"]).split("/")[0],
                         "genre": song_metadata.get("genre"),
                         "path": file_path,
-                        "extension": os.path.splitext(file_path)[1]
+                        "extension": os.path.splitext(file_path)[1],
+                        "modified_by": song_metadata["modified_by"]
                     })
 
     if gen_log:
