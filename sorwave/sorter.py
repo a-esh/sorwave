@@ -1,6 +1,10 @@
 import os 
 import datetime
 from sorwave.logger import gen_log, new_log_file
+import winshell
+from progress.bar import Bar
+
+
 
 def sintaxis_filter(path):
     unit = path[:2]
@@ -45,7 +49,12 @@ def remove_empty_folders(path):
 def sort_songs(folder_path, use_api=True):
     sorter_log = {}
     music_library = gen_log(folder_path, use_api, False)
-    
+    total_songs = 0
+    for albums in music_library.values():
+        for songs in albums.values():
+            total_songs += len(songs)
+    bar = Bar('Processing', max=total_songs)
+
     for fixed_artist, albums in music_library.items():
         artist_path = os.path.join(folder_path, fixed_artist.replace("/", "-"))
 
@@ -54,6 +63,7 @@ def sort_songs(folder_path, use_api=True):
 
             for song in songs:
                 song_path = sintaxis_filter(os.path.join(album_path, ("{}. {}{}".format(song["tracknumber"], song["title"], song["extension"]))))
+                bar.next()
 
                 if not song_path.upper() == song["path"].upper():
 
@@ -73,5 +83,26 @@ def sort_songs(folder_path, use_api=True):
     remove_empty_folders(folder_path)
     new_log_file((folder_path), sorter_log, f"sorter_log - {datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}")
     gen_log(folder_path, use_api, True)
+
+def create_shortcut(file_path, shortcut_path):
+    shortcut_path = os.path.abspath(shortcut_path)
     
+    with winshell.shortcut(shortcut_path) as link:
+        link.path = file_path
+        link.working_directory = os.path.dirname(file_path)
+        link.description = f"Shortcut to {os.path.basename(file_path)}"
+
+def new_playlist(folder_path, playlist_name):
+    playlist_path = os.path.join(folder_path, "Playlists", playlist_name)
+    if not os.path.exists(playlist_path):
+        os.makedirs(playlist_path)
+    return playlist_path    
+
+def add_playlist(folder_path, file_path, playlist_name):
+    playlist_path = new_playlist(folder_path, playlist_name)
+    new_file_path = os.path.join(playlist_path, os.path.basename(file_path))
+    if not os.path.exists(new_file_path):
+        create_shortcut(file_path, new_file_path)
+    
+
     

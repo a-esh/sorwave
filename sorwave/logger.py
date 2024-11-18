@@ -4,6 +4,7 @@ import datetime
 from .metadata_manager import get_metadata
 from .musicbrainzngs_API import set_useragent
 import musicbrainzngs
+from progress.bar import Bar
 
 def filter_artist(artist, title = None, use_api= False):
     if use_api:
@@ -46,10 +47,15 @@ def new_log_file(folder_path, log_dict, log_type):
 def gen_log(folder_path, use_api=True, gen_log=True):
     song_log = {}
     bugs_log = {}
+    
+    total_files = sum([len(files) for r, d, files in os.walk(folder_path) if any(f.endswith(('.flac', '.mp3')) for f in files)])
+    bar = Bar('Processing', max=total_files)
 
+    # Iterate through files and update the progress bar
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             if file.endswith('.flac') or file.endswith('.mp3'):
+                bar.next()
                 file_path = os.path.join(root, file)
                 song_metadata = get_metadata(file_path)
                 if not song_metadata:
