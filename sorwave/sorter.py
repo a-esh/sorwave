@@ -5,22 +5,23 @@ from sorwave.logger import gen_log, new_log_file
 from progress.bar import Bar
 from win32com.client import Dispatch
 
-
-
 def sintaxis_filter(path):
+    """
+    Filters invalid characters from a file path.
+    """
     unit = path[:2]
     path = path[2:]
-    invalid_characters = '*?"<>|:/'  
-    filtering_path = ''.join(caracter for caracter in path if caracter not in invalid_characters)
+    invalid_characters = '*?"<>|:/'
+    filtering_path = ''.join(char for char in path if char not in invalid_characters)
     return unit + filtering_path
 
 def remove_empty_folders(path):
+    """
+    Removes empty folders in a given directory.
+    """
     for current_dir, dirs, files in os.walk(path, topdown=False):
-
         for dir_name in dirs:
-
             full_path = os.path.join(current_dir, dir_name)
-
             if not os.listdir(full_path) or (len(os.listdir(full_path)) == 1 and os.listdir(full_path)[0].lower() == 'desktop.ini'):
                 # Remove files in the directory
                 try:
@@ -48,6 +49,9 @@ def remove_empty_folders(path):
         print(f"Empty directory removed: {path}")
 
 def sort_songs(folder_path, use_api=False):
+    """
+    Sorts songs in the specified folder.
+    """
     sorter_log = {}
     music_library = gen_log(folder_path, use_api, False)
     total_songs = 0
@@ -87,49 +91,56 @@ def sort_songs(folder_path, use_api=False):
     bar.finish()
 
 def create_shortcut(target_path, shortcut_folder):
+    """
+    Creates a shortcut to the target path in the specified folder.
+    """
     try:
-            if not os.path.exists(target_path):
-                raise FileNotFoundError(f"Target path does not exist: {target_path}")
-            
-            # Ensure the shortcut folder exists
-            os.makedirs(shortcut_folder, exist_ok=True)
-
-            # Get the target's name without the extension
-            shortcut_name = os.path.splitext(os.path.basename(target_path))[0]
-            shortcut_path = os.path.join(shortcut_folder, shortcut_name)
-            
-            if platform.system() == "Windows":
-                # Add .lnk extension for Windows shortcuts
-                shortcut_path += ".lnk"
-                
-                # Create the shortcut
-                shell = Dispatch("WScript.Shell")
-                shortcut = shell.CreateShortcut(shortcut_path)
-                shortcut.TargetPath = target_path
-                shortcut.WorkingDirectory = os.path.dirname(target_path)
-                shortcut.save()
-                print(f"Windows shortcut created: {shortcut_path}")
-            
-            elif platform.system() == "Linux":
-                # Create a symbolic link for Linux
-                os.symlink(target_path, shortcut_path)
-                print(f"Linux symbolic link created: {shortcut_path}")
-            
-            else:
-                raise OSError("Unsupported operating system")
+        if not os.path.exists(target_path):
+            raise FileNotFoundError(f"Target path does not exist: {target_path}")
         
+        # Ensure the shortcut folder exists
+        os.makedirs(shortcut_folder, exist_ok=True)
+
+        # Get the target's name without the extension
+        shortcut_name = os.path.splitext(os.path.basename(target_path))[0]
+        shortcut_path = os.path.join(shortcut_folder, shortcut_name)
+        
+        if platform.system() == "Windows":
+            # Add .lnk extension for Windows shortcuts
+            shortcut_path += ".lnk"
+            
+            # Create the shortcut
+            shell = Dispatch("WScript.Shell")
+            shortcut = shell.CreateShortcut(shortcut_path)
+            shortcut.TargetPath = target_path
+            shortcut.WorkingDirectory = os.path.dirname(target_path)
+            shortcut.save()
+            print(f"Windows shortcut created: {shortcut_path}")
+        
+        elif platform.system() == "Linux":
+            # Create a symbolic link for Linux
+            os.symlink(target_path, shortcut_path)
+            print(f"Linux symbolic link created: {shortcut_path}")
+        
+        else:
+            raise OSError("Unsupported operating system")
+    
     except Exception as e:
         print(f"Error: {e}")
 
 def new_playlist(folder_path, playlist_name):
+    """
+    Creates a new playlist folder.
+    """
     playlist_path = os.path.join(folder_path, "Playlists", playlist_name)
     if not os.path.exists(playlist_path):
         os.makedirs(playlist_path)
     return playlist_path    
 
 def add_playlist(folder_path, file_path, playlist_name):
+    """
+    Adds a file to a playlist by creating a shortcut in the playlist folder.
+    """
     playlist_path = new_playlist(folder_path, playlist_name)
     create_shortcut(file_path, playlist_path)
-    
-
-    
+    print(f"Added to playlist: {playlist_path}")
