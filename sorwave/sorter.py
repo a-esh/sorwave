@@ -49,6 +49,7 @@ def remove_empty_folders(path):
         print(f"Empty directory removed: {path}")
 
 def sort_songs(folder_path, use_api=False):
+    folder_path = os.path.abspath(folder_path)
     """
     Sorts songs in the specified folder.
     """
@@ -132,6 +133,7 @@ def new_playlist(folder_path, playlist_name):
     """
     Creates a new playlist folder.
     """
+    folder_path = os.path.abspath(folder_path)
     playlist_path = os.path.join(folder_path, "Playlists", playlist_name)
     if not os.path.exists(playlist_path):
         os.makedirs(playlist_path)
@@ -141,6 +143,8 @@ def add_playlist(folder_path, file_path, playlist_name):
     """
     Adds a file to a playlist by creating a shortcut in the playlist folder.
     """
+    file_path = os.path.abspath(file_path)
+    folder_path = os.path.abspath(folder_path)
     playlist_path = new_playlist(folder_path, playlist_name)
     create_shortcut(file_path, playlist_path)
     print(f"Added to playlist: {playlist_path}")

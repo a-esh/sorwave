@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from mutagen.flac import FLAC
 from mutagen.easyid3 import EasyID3
 from .musicbrainzngs_API import set_useragent
@@ -10,6 +11,7 @@ def get_file_extension(file_path):
     return os.path.splitext(file_path)[-1].lower()
 
 def get_metadata(file_path,repair = False):
+    file_path = os.path.abspath(file_path)
     try:
         ext = get_file_extension(file_path)
         if ext in file_extensions:
@@ -28,6 +30,7 @@ def repair_metadata(file_path):
     """
     Repairs the metadata of an audio file using the MusicBrainz database.
     """
+    file_path = os.path.abspath(file_path)
     set_useragent()
     file_name = os.path.splitext(os.path.basename(file_path))[0]
 
