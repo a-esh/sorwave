@@ -21,6 +21,7 @@ def filter_artist(artist, title = None, use_api= False):
         except musicbrainzngs.WebServiceError as e:
             print(f"MusicBrainz API error: {e}")
     else:
+        print(title)
         dividers = [",", "/", "Ft.", "feat.", "Feat", "&"]
         for fix in dividers:
             artist = artist.split(fix)[0].strip()
