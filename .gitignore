@@ -55,3 +55,4 @@ yarn-error.log*
 /yarn.lock
 
 build_and_install.py
+test.py

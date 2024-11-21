@@ -1,7 +1,7 @@
 import os 
 import datetime
 import platform
-from sorwave.logger import gen_log, new_log_file
+from .logger import gen_log, new_log_file
 from progress.bar import Bar
 from win32com.client import Dispatch
 
@@ -54,7 +54,9 @@ def sort_songs(folder_path, use_api=False):
     Sorts songs in the specified folder.
     """
     sorter_log = {}
+    print("Getting songs data:")
     music_library = gen_log(folder_path, use_api, False)
+    print("\nSorting songs:")
     total_songs = 0
     
     for albums in music_library.values():
@@ -86,10 +88,9 @@ def sort_songs(folder_path, use_api=False):
                         new_song_path = sintaxis_filter(os.path.join(album_path, ("{}. {} (duplicate){}".format(song["tracknumber"], song["title"], song["extension"]))))
                         os.rename(song["path"], new_song_path)
                         sorter_log[song["title"] + " (duplicate)"] = [song["path"], new_song_path]
-                            
+
     remove_empty_folders(folder_path)
-    new_log_file((folder_path), sorter_log, f"sorter_log - {datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}")
-    gen_log(folder_path, use_api, True)
+    new_log_file(folder_path, music_library, "sorter_log", sorter_log)
     bar.finish()
 
 def create_shortcut(target_path, shortcut_folder):

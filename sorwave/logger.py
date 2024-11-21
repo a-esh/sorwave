@@ -1,8 +1,8 @@
 import os
 import json
 import datetime
-from sorwave.metadata_manager import get_metadata
-from sorwave.musicbrainzngs_API import set_useragent
+from .metadata_manager import get_metadata
+from .musicbrainzngs_API import set_useragent
 import musicbrainzngs
 from progress.bar import Bar
 
@@ -26,13 +26,16 @@ def filter_artist(artist, title = None, use_api= False):
             artist = artist.split(fix)[0].strip()
     return artist
 
-def new_log_file(folder_path, log_dict, log_type):
-    log_path = os.path.join(folder_path, f"{log_type}.json")
+def new_log_file(folder_path, log_dict, log_type, sorter_log):
+    date = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+    log_path = os.path.join(folder_path, f"{log_type} {date.replace(':', '-')}.json")
     log_info = {
-        "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "date": date,
         "type": log_type,
-        "data": log_dict
+        "data": log_dict,
     }
+    if log_type == "sorter_log":
+        log_info["sorter_log"] = sorter_log
 
     if os.path.exists(log_path):
         os.remove(log_path)
