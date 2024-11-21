@@ -65,7 +65,9 @@ def gen_log(folder_path, use_api=False, gen_log=True):
                 if not song_metadata:
                     bugs_log["Metadata error"] = file_path
                 else:
-                    artist = song_metadata.get("albumartist", song_metadata.get("artist"))
+                    artist = song_metadata.get("albumartist")
+                    if not artist:
+                        artist = song_metadata.get("artist")
                     artist = filter_artist(artist, song_metadata["title"], use_api)
                     album = song_metadata.get("album", song_metadata.get("title"))
                     album = album.replace("/", "-")

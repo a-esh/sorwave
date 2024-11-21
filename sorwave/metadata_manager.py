@@ -22,8 +22,11 @@ def get_metadata(file_path, repair=False):
 
         if repair and (not metadata.get('artist') or not metadata.get('title') or not metadata.get('album')):   
             repair_metadata(file_path) 
-            return get_metadata(file_path, False)
-                        
+            metadata = get_metadata(file_path, False)
+        
+        if not metadata.get('album'):
+            metadata['album'] = metadata['title']
+
         return metadata
     except Exception as e:
         print(f"Error extracting metadata from {file_path}: {e}")
