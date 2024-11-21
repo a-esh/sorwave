@@ -1,8 +1,8 @@
 import os
 import json
 import datetime
-from .metadata_manager import get_metadata
-from .musicbrainzngs_API import set_useragent
+from sorwave.metadata_manager import get_metadata
+from sorwave.musicbrainzngs_API import set_useragent
 import musicbrainzngs
 from progress.bar import Bar
 
@@ -83,7 +83,11 @@ def gen_log(folder_path, use_api=False, gen_log=True):
                         "genre": song_metadata.get("genre"),
                         "path": file_path,
                         "extension": os.path.splitext(file_path)[1],
-                        "modified_by": song_metadata["modified_by"]
+                        "modified_by": "None"
+                    })
+                    if use_api:
+                        song_log[artist][album].append({
+                            "modified_by": "sorwave"
                     })
 
     if gen_log:

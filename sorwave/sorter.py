@@ -56,6 +56,7 @@ def sort_songs(folder_path, use_api=False):
     sorter_log = {}
     music_library = gen_log(folder_path, use_api, False)
     total_songs = 0
+    
     for albums in music_library.values():
         for songs in albums.values():
             total_songs += len(songs)

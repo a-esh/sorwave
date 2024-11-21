@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from mutagen.flac import FLAC
 from mutagen.easyid3 import EasyID3
-from .musicbrainzngs_API import set_useragent
+from sorwave.musicbrainzngs_API import set_useragent
 import musicbrainzngs
 
 file_extensions = {".flac": FLAC, ".mp3": EasyID3}
