@@ -1,9 +1,8 @@
 import os 
-import datetime
 import platform
-from .logger import gen_log, new_log_file
 from progress.bar import Bar
 from win32com.client import Dispatch
+from .logger import gen_log, new_log_file
 
 def sintaxis_filter(path):
     """
@@ -54,7 +53,7 @@ def sort_songs(folder_path, use_api=False):
     Sorts songs in the specified folder.
     """
     sorter_log = {}
-    print("Getting songs data:")
+    print("\nGetting songs data:")
     music_library = gen_log(folder_path, use_api, False)
     print("\nSorting songs:")
     total_songs = 0

@@ -1,30 +1,15 @@
 import os
 import json
 import datetime
+from progress.bar import Bar
 from .metadata_manager import get_metadata
 from .musicbrainzngs_API import set_useragent
-import musicbrainzngs
-from progress.bar import Bar
 
-def filter_artist(artist, title = None, use_api= False):
-    if use_api:
-        set_useragent()
-        try:
-            if title:
-                result = musicbrainzngs.search_recordings(artist=artist, recording=title, limit=1)
-                if result['recording-list']:
-                    artist = result['recording-list'][0]['artist-credit'][0]['artist']['name']
-            else:
-                result = musicbrainzngs.search_artists(artist=artist, limit=1)
-                if result['artist-list']:
-                    artist = result['artist-list'][0]['name']
-        except musicbrainzngs.WebServiceError as e:
-            print(f"MusicBrainz API error: {e}")
-    else:
-        print(title)
-        dividers = [",", "/", "Ft.", "feat.", "Feat", "&"]
-        for fix in dividers:
-            artist = artist.split(fix)[0].strip()
+
+def filter_artist(artist):
+    dividers = [",", "/", "Ft.", "feat.", "Feat", "&"]
+    for fix in dividers:
+        artist = artist.split(fix)[0].strip()
     return artist
 
 def new_log_file(folder_path, log_dict, log_type, sorter_log):
@@ -61,21 +46,17 @@ def gen_log(folder_path, use_api=False, gen_log=True):
             if file.endswith('.flac') or file.endswith('.mp3'):
                 bar.next()
                 file_path = os.path.join(root, file)
-                song_metadata = get_metadata(file_path)
+                song_metadata = get_metadata(file_path, use_api,)
                 if not song_metadata:
                     bugs_log["Metadata error"] = file_path
                 else:
                     artist = song_metadata.get("albumartist")
                     if not artist:
                         artist = song_metadata.get("artist")
-                    artist = filter_artist(artist, song_metadata["title"], use_api)
+                    artist = filter_artist(artist)
                     album = song_metadata.get("album", song_metadata.get("title"))
                     album = album.replace("/", "-")
                     song_metadata["tracknumber"] = song_metadata.get("tracknumber", 1)
-
-                    # Add "Modified by sorwave" tag to metadata
-                    if use_api:
-                        song_metadata["modified_by"] = "sorwave"
 
                     if artist not in song_log:
                         song_log[artist] = {}
@@ -89,11 +70,6 @@ def gen_log(folder_path, use_api=False, gen_log=True):
                         "genre": song_metadata.get("genre"),
                         "path": file_path,
                         "extension": os.path.splitext(file_path)[1],
-                        "modified_by": "None"
-                    })
-                    if use_api:
-                        song_log[artist][album].append({
-                            "modified_by": "sorwave"
                     })
 
     if gen_log:
