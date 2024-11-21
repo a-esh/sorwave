@@ -3,6 +3,7 @@ from pathlib import Path
 from mutagen.flac import FLAC
 from mutagen.easyid3 import EasyID3
 from tinytag import TinyTag
+from twine import metadata
 from .musicbrainzngs_API import set_useragent
 import musicbrainzngs
 
@@ -12,13 +13,18 @@ file_extensions = {".flac": FLAC, ".mp3": EasyID3}
 def get_file_extension(file_path):
     return os.path.splitext(file_path)[-1].lower()
 
-def get_metadata(file_path):
+def get_metadata(file_path, repair=False):
     try:
         ext = get_file_extension(file_path)
         if ext in file_extensions:
-            tag = TinyTag.get(file_path)
-                    
-            return tag.__dict__
+            metadata = (TinyTag.get(file_path)).__dict__
+            print(metadata.get('artist'))
+
+        if repair and (not metadata.get('artist') or not metadata.get('title') or not metadata.get('album')):   
+            repair_metadata(file_path) 
+            return get_metadata(file_path, False)
+                        
+        return metadata
     except Exception as e:
         print(f"Error extracting metadata from {file_path}: {e}")
         return None
