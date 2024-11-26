@@ -1,24 +1,44 @@
 import os 
-import datetime
 import platform
 from .logger import gen_log, new_log_file
 from progress.bar import Bar
 from win32com.client import Dispatch
 
 def sintaxis_filter(path):
-    '''
-    Filters invalid characters from a file path.
-    '''
+    """
+    This function takes a file path as input and removes any characters that are 
+    considered invalid for file paths in most operating systems. The invalid 
+    characters filtered out are: '*', '?', '<', '>', '|', ':', and '/'.
+
+    Parameters:
+    path (str): The file path to be filtered.
+
+    Returns:
+    str: The filtered file path with invalid characters removed.
+    """
+
     unit = path[:2]
     path = path[2:]
-    invalid_characters = '*?'<>|:/'
+    invalid_characters = "*?'<>|:/"
     filtering_path = ''.join(char for char in path if char not in invalid_characters)
     return unit + filtering_path
 
 def remove_empty_folders(path):
-    '''
-    Removes empty folders in a given directory.
-    '''
+    """
+    This function traverses the directory tree rooted at the specified path,
+    and removes any empty folders it encounters. If a folder contains only
+    a 'desktop.ini' file, it is also considered empty and will be removed.
+    The function handles permission errors by attempting to change the file
+    permissions before retrying the removal.
+
+    Parameters:
+    path (str): The root directory path to start the search for empty folders.
+    Raises:
+
+    PermissionError: If the function lacks the necessary permissions to remove
+                     a file or directory, it will print a message indicating
+                     the missing permissions.
+    """
     for current_dir, dirs, files in os.walk(path, topdown=False):
         for dir_name in dirs:
             full_path = os.path.join(current_dir, dir_name)
@@ -49,6 +69,25 @@ def remove_empty_folders(path):
         print(f'Empty directory removed: {path}')
 
 def sort_song(file_path, library_path):
+    """
+    Sorts a song file into a structured music library.
+    This function takes a song file and organizes it into a music library
+    based on the song's metadata. It creates directories for the artist and
+    album if they do not exist, and moves the song file to the appropriate
+    location. If a song with the same name already exists, it appends
+    "(duplicate)" to the filename.
+    Args:
+        file_path (str): The path to the song file to be sorted.
+        library_path (str): The root path of the music library.
+    Returns:
+        dict: A dictionary containing the log of moved files. The keys are
+              the song titles, and the values are lists with the original
+              and new file paths.
+    Example:
+        sorter_log = sort_song('/path/to/song.mp3', '/path/to/music/library')
+        print(sorter_log)
+    """
+
     song_data = gen_log(file_path, library_path,  False)
     artist = list(song_data.keys())[0]
     album = list(song_data[artist].keys())[0]
@@ -81,11 +120,27 @@ def sort_song(file_path, library_path):
     return sorter_log
 
 def sort_library(folder_path):
-    folder_path = os.path.abspath(folder_path)
-    '''
-    Sorts songs in the specified folder.
-    '''
+    """
+    Sorts a music library by organizing songs into artist and album folders.
+    Args:
+        folder_path (str): The path to the folder containing the music library.
+    Returns:
+        dict: A log of the sorting process, with song titles as keys and lists of 
+              original and new paths as values.
+    This function performs the following steps:
+    1. Generates a log of the music library.
+    2. Counts the total number of songs.
+    3. Iterates through the music library, organizing songs into artist and album folders.
+    4. Renames and moves songs to their new locations.
+    5. Handles duplicate songs by appending "(duplicate)" to their filenames.
+    6. Removes empty folders.
+    7. Creates a new log file documenting the sorting process.
+    Example:
+        sorter_log = sort_library('/path/to/music/library')
+    """
+
     sorter_log = {}
+    folder_path = os.path.abspath(folder_path)
     print('Getting songs data:')
     music_library = gen_log(folder_path, False)
     print('\nSorting songs:')

@@ -1,42 +1,64 @@
 import os
-from pathlib import Path
 from mutagen.flac import FLAC
 from mutagen.easyid3 import EasyID3
-from .musicbrainzngs_API import set_useragent
 import musicbrainzngs
+import json
+from .musicbrainzngs_API import set_useragent
+from .logger import new_log
 
-file_extensions = {".flac": FLAC, ".mp3": EasyID3}
+
+file_extensions = {'.flac': FLAC, '.mp3': EasyID3}
 
 def get_file_extension(file_path):
     return os.path.splitext(file_path)[-1].lower()
 
-def get_metadata(file_path,repair = False):
+def get_metadata(file_path):
+    """
+    Extracts metadata from an audio file.
+    Args:
+        file_path (str): The path to the audio file.
+    Returns:
+        dict: A dictionary containing the extracted metadata, where keys are metadata fields and values are the corresponding metadata values.
+    Raises:
+        Exception: If there is an error extracting metadata, an exception is caught and an error message is printed.
+    """
+
     file_path = os.path.abspath(file_path)
     try:
         ext = get_file_extension(file_path)
         if ext in file_extensions:
             audio = file_extensions[ext](file_path)
             audio_items = {key: value[0] for key, value in audio.items()}
-            
-        if repair and (not audio_items.get('artist') or not audio_items.get('title') or not audio_items.get('album')):   
-            repair_metadata(file_path) 
-            audio_items = get_metadata(file_path, False)
+
         return audio_items
     except Exception as e:
-        print("Error extracting metadata:", e)
-    return None
+        print('Error extracting metadata:', e)
 
-def repair_metadata(file_path):
+def fix_metadata(file_path, library_path):
     """
-    Repairs the metadata of an audio file using the MusicBrainz database.
+    This function retrieves the current metadata of the specified audio file,
+    searches for the correct metadata using the MusicBrainz database, and updates
+    the file with the new metadata if found. It also logs the changes made to the metadata.
+    Args:
+        file_path (str): The path to the audio file whose metadata needs to be fixed.
+        library_path (str): The path to the library where the log of metadata changes will be stored.
+    Returns:
+        dict: A dictionary containing the old and new metadata of the audio file.
+    Raises:
+        Exception: If there is an error while updating the metadata.
+    Example:
+        metadata_changes = fix_metadata('/path/to/audio/file.mp3', '/path/to/library')
     """
+    metadata_changes = {}
+    metadata = get_metadata(file_path, True)
+    metadata_changes['old_metadata'] = {key: value for key, value in metadata.items() if not value}
+
     file_path = os.path.abspath(file_path)
     set_useragent()
     file_name = os.path.splitext(os.path.basename(file_path))[0]
 
     try:
         result = musicbrainzngs.search_recordings(recording=file_name, limit=1)
-        
         if result['recording-list']:
             recording = result['recording-list'][0]
             metadata = {
@@ -51,11 +73,67 @@ def repair_metadata(file_path):
             ext = get_file_extension(file_path)
             audio = file_extensions[ext](file_path)
             
-            for key, value in metadata.items():
-                if value:
-                    audio[key] = value
-            
+            metadata_changes['new_metadata'] = metadata
             audio.save()
-    except Exception as e:
-        print("Error updating metadata:", e)
 
+            if metadata_changes['old_metadata'] != metadata_changes['new_metadata']:
+                new_log(library_path, metadata_changes, 'metadata_changes')
+
+    except Exception as e:
+        print('Error updating metadata:', e)
+
+    return metadata_changes
+
+def previw_fix_metadata(file_path):
+    """
+    Preview and fix metadata of a given file.
+    This function retrieves the current metadata of the specified file,
+    prints it, fixes the metadata using the `fix_metadata` function, 
+    retrieves the new metadata, prints it, and returns both the old 
+    and new metadata.
+    Args:
+        file_path (str): The path to the file whose metadata needs to be fixed.
+    Returns:
+        tuple: A tuple containing two elements:
+            - old_metadata: The metadata of the file before fixing.
+            - new_metadata: The metadata of the file after fixing.
+    """
+
+    metadata = get_metadata(file_path)
+    print('Old metadata:', metadata)
+    old_metadata = metadata
+
+    fix_metadata(file_path)
+
+    metadata = get_metadata(file_path)
+    print('New metadata:', metadata)
+    new_metadata = metadata
+
+    return old_metadata, new_metadata
+
+def backup():
+    def backup(file_path, backup_file):
+        """
+        Restores the metadata of the specified audio file from a backup JSON file.
+        Args:
+            file_path (str): The path to the audio file whose metadata needs to be restored.
+            backup_file (str): The path to the backup JSON file containing the old metadata.
+        Raises:
+            Exception: If there is an error while restoring the metadata.
+        """
+        try:
+            with open(backup_file, 'r') as f:
+                backup_data = json.load(f)
+            
+            old_metadata = backup_data.get('old_metadata', {})
+            
+            ext = get_file_extension(file_path)
+            if ext in file_extensions:
+                audio = file_extensions[ext](file_path)
+                for key, value in old_metadata.items():
+                    audio[key] = value
+                audio.save()
+            
+            print('Metadata restored successfully.')
+        except Exception as e:
+            print('Error restoring metadata:', e)
