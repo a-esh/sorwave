@@ -48,14 +48,46 @@ def remove_empty_folders(path):
         os.rmdir(path)
         print(f"Empty directory removed: {path}")
 
-def sort_songs(folder_path, use_api=False):
+def sort_song(file_path, library_path):
+    song_data = gen_log(file_path, library_path,  False)
+    artist = list(song_data.keys())[0]
+    album = list(song_data[artist].keys())[0]
+    song = song_data[artist][album][0]
+    
+    artist_path = os.path.abspath(os.path.join(library_path, artist))
+    album_path = sintaxis_filter(os.path.join(artist_path, album))
+    song_path = sintaxis_filter(os.path.join(album_path, ("{}. {}{}".format(song["tracknumber"], song["title"], song["extension"]))))
+    
+    sorter_log = {}
+
+    if not song_path.upper() == song["path"].upper():
+
+        if not os.path.exists(album_path):
+            os.makedirs(album_path)
+            os.rename(song["path"], song_path)
+
+        elif not os.path.exists(song_path):
+            os.rename(song["path"], song_path)
+            sorter_log[song["title"]] = [song["path"], song_path]
+
+        else:
+            new_song_path = sintaxis_filter(os.path.join(album_path, ("{}. {} (duplicate){}".format(song["tracknumber"], song["title"], song["extension"]))))
+            os.rename(song["path"], new_song_path)
+            sorter_log[song["title"] + " (duplicate)"] = [song["path"], new_song_path]
+
+    remove_empty_folders(library_path)
+    new_log_file(library_path, song_data, "sorter_log", sorter_log)
+
+    return sorter_log
+
+def sort_library(folder_path):
     folder_path = os.path.abspath(folder_path)
     """
     Sorts songs in the specified folder.
     """
     sorter_log = {}
     print("Getting songs data:")
-    music_library = gen_log(folder_path, use_api, False)
+    music_library = gen_log(folder_path, False)
     print("\nSorting songs:")
     total_songs = 0
     
@@ -64,16 +96,16 @@ def sort_songs(folder_path, use_api=False):
             total_songs += len(songs)
     bar = Bar('Processing', max=total_songs)
 
-    for fixed_artist, albums in music_library.items():
-        artist_path = os.path.join(folder_path, fixed_artist.replace("/", "-"))
+    for artist, albums in music_library.items():
+        artist_path = os.path.join(folder_path, artist.replace("/", "-"))
 
         for album, songs in albums.items():
             album_path = sintaxis_filter(os.path.join(artist_path, album))
 
             for song in songs:
-                song_path = sintaxis_filter(os.path.join(album_path, ("{}. {}{}".format(song["tracknumber"], song["title"], song["extension"]))))
                 bar.next()
-
+                song_path = sintaxis_filter(os.path.join(album_path, ("{}. {}{}".format(song["tracknumber"], song["title"], song["extension"]))))
+                
                 if not song_path.upper() == song["path"].upper():
 
                     if not os.path.exists(album_path):
@@ -92,6 +124,8 @@ def sort_songs(folder_path, use_api=False):
     remove_empty_folders(folder_path)
     new_log_file(folder_path, music_library, "sorter_log", sorter_log)
     bar.finish()
+
+    return sorter_log
 
 def create_shortcut(target_path, shortcut_folder):
     """
