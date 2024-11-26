@@ -82,6 +82,7 @@ def previw_fix_metadata(file_path):
     old_metadata = get_metadata(file_path)
     print('Old metadata:', old_metadata)
 
+    set_useragent()
     file_name = os.path.splitext(os.path.basename(file_path))[0]
     query = musicbrainzngs_query(file_name)
     new_metadata = musicbrainzngs.search_recordings(query)
