@@ -1,3 +1,4 @@
+
 import os
 from mutagen.flac import FLAC
 from mutagen.easyid3 import EasyID3
@@ -5,34 +6,11 @@ import musicbrainzngs
 import json
 from .musicbrainzngs_API import set_useragent
 from .logger import new_log_file
+from .metadata_extractor import get_metadata, get_file_extension, file_extensions
 
-
-file_extensions = {'.flac': FLAC, '.mp3': EasyID3}
-
-def get_file_extension(file_path):
-    return os.path.splitext(file_path)[-1].lower()
-
-def get_metadata(file_path):
-    """
-    Extracts metadata from an audio file.
-    Args:
-        file_path (str): The path to the audio file.
-    Returns:
-        dict: A dictionary containing the extracted metadata, where keys are metadata fields and values are the corresponding metadata values.
-    Raises:
-        Exception: If there is an error extracting metadata, an exception is caught and an error message is printed.
-    """
-
-    file_path = os.path.abspath(file_path)
-    try:
-        ext = get_file_extension(file_path)
-        if ext in file_extensions:
-            audio = file_extensions[ext](file_path)
-            audio_items = {key: value[0] for key, value in audio.items()}
-
-        return audio_items
-    except Exception as e:
-        print('Error extracting metadata:', e)
+def musicbrainzngs_query(file_name):
+    query = {'recording': file_name, 'limit': 1}
+    return query
 
 def fix_metadata(file_path, library_path):
     """
@@ -58,7 +36,9 @@ def fix_metadata(file_path, library_path):
     file_name = os.path.splitext(os.path.basename(file_path))[0]
 
     try:
-        result = musicbrainzngs.search_recordings(recording=file_name, limit=1)
+        query = musicbrainzngs_query(file_name)
+        result = musicbrainzngs.search_recordings(query)
+
         if result['recording-list']:
             recording = result['recording-list'][0]
             metadata = {
@@ -99,15 +79,14 @@ def previw_fix_metadata(file_path):
             - new_metadata: The metadata of the file after fixing.
     """
 
-    metadata = get_metadata(file_path)
-    print('Old metadata:', metadata)
-    old_metadata = metadata
+    old_metadata = get_metadata(file_path)
+    print('Old metadata:', old_metadata)
 
-    fix_metadata(file_path)
+    file_name = os.path.splitext(os.path.basename(file_path))[0]
+    query = musicbrainzngs_query(file_name)
+    new_metadata = musicbrainzngs.search_recordings(query)
 
-    metadata = get_metadata(file_path)
-    print('New metadata:', metadata)
-    new_metadata = metadata
+    print('New metadata:', new_metadata)
 
     return old_metadata, new_metadata
 

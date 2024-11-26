@@ -1,8 +1,7 @@
 import os
 import json
 import datetime
-from .metadata_manager import get_metadata
-from .musicbrainzngs_API import set_useragent
+from .metadata_extractor import get_metadata
 from progress.bar import Bar
 
 def get_main_artist(artist):
