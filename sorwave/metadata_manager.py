@@ -111,29 +111,28 @@ def previw_fix_metadata(file_path):
 
     return old_metadata, new_metadata
 
-def backup():
-    def backup(file_path, backup_file):
-        """
-        Restores the metadata of the specified audio file from a backup JSON file.
-        Args:
-            file_path (str): The path to the audio file whose metadata needs to be restored.
-            backup_file (str): The path to the backup JSON file containing the old metadata.
-        Raises:
-            Exception: If there is an error while restoring the metadata.
-        """
-        try:
-            with open(backup_file, 'r') as f:
-                backup_data = json.load(f)
-            
-            old_metadata = backup_data.get('old_metadata', {})
-            
-            ext = get_file_extension(file_path)
-            if ext in file_extensions:
-                audio = file_extensions[ext](file_path)
-                for key, value in old_metadata.items():
-                    audio[key] = value
-                audio.save()
-            
-            print('Metadata restored successfully.')
-        except Exception as e:
-            print('Error restoring metadata:', e)
+def backup(file_path, backup_file):
+    """
+    Restores the metadata of the specified audio file from a backup JSON file.
+    Args:
+        file_path (str): The path to the audio file whose metadata needs to be restored.
+        backup_file (str): The path to the backup JSON file containing the old metadata.
+    Raises:
+        Exception: If there is an error while restoring the metadata.
+    """
+    try:
+        with open(backup_file, 'r') as f:
+            backup_data = json.load(f)
+        
+        old_metadata = backup_data.get('old_metadata', {})
+        
+        ext = get_file_extension(file_path)
+        if ext in file_extensions:
+            audio = file_extensions[ext](file_path)
+            for key, value in old_metadata.items():
+                audio[key] = value
+            audio.save()
+        
+        print('Metadata restored successfully.')
+    except Exception as e:
+        print('Error restoring metadata:', e)
