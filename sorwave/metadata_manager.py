@@ -4,7 +4,7 @@ from mutagen.easyid3 import EasyID3
 import musicbrainzngs
 import json
 from .musicbrainzngs_API import set_useragent
-from .logger import new_log
+from .logger import new_log_file
 
 
 file_extensions = {'.flac': FLAC, '.mp3': EasyID3}
@@ -77,7 +77,7 @@ def fix_metadata(file_path, library_path):
             audio.save()
 
             if metadata_changes['old_metadata'] != metadata_changes['new_metadata']:
-                new_log(library_path, metadata_changes, 'metadata_changes')
+                new_log_file(library_path, metadata_changes, 'metadata_changes')
 
     except Exception as e:
         print('Error updating metadata:', e)
