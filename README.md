@@ -1,4 +1,5 @@
-*
+-
+
 # Sorwave
 
 Sorwave is a powerful music classifier based on Python. It uses the `mutagen` libraries and `musicbrainzngs` API to manage metadata and perform other music file-related operations. This project is designed to help users efficiently organize and manage their music collection.
@@ -57,7 +58,7 @@ This function extracts metadata from a song when provided with the file path.
 #### Usage Example
 
 ```python
-metadata = sw.get_metadata(r"path/to/your/song.mp3")
+metadata = sw.get_metadata(r'path/to/your/song.mp3')
 print(metadata)
 ```
 
@@ -72,7 +73,7 @@ This function generates a log in the main directory of all the songs and songs i
 #### Usage Example
 
 ```python
-sw.gen_log(r"path/to/your/music/folder")
+sw.gen_log(r'path/to/your/music/folder')
 ```
 
 ### `new_log`
@@ -86,7 +87,7 @@ This function can be used to create a new log of specific activities or events i
 #### Usage Example
 
 ```python
-sw.new_log("Description of the event or activity")
+sw.new_log('Description of the event or activity')
 ```
 
 ### `filter_artist`
@@ -100,7 +101,7 @@ This function filters artist names to be compatible with Windows paths without l
 #### Usage Example
 
 ```python
-artist = "Name: of*Artist?"
+artist = 'Name: of*Artist?'
 filtered_artist = sw.filter_artist(artist)
 print(filtered_artist)  # Output: Name_of_Artist
 ```
@@ -116,7 +117,7 @@ This function organizes music into their respective folders and subfolders (arti
 #### Usage Example
 
 ```python
-sw.sort_songs(r"path/to/your/music/folder")
+sw.sort_songs(r'path/to/your/music/folder')
 ```
 
 ## Features
@@ -140,7 +141,7 @@ Contributions are welcome! If you want to contribute, please follow these steps:
 
 - [ ] Add support for more music file formats.
 - [ ] Improve documentation with more examples and tutorials.
-- [X] Integration with online music services for automatic metadata.
+- [x] Integration with online music services for automatic metadata.
 
 ## FAQ
 
@@ -169,4 +170,5 @@ Email: [abrahamescalona@live.com](mailto:abrahamescalona@live.com)
 ## Community
 
 [![Discord](https://img.shields.io/badge/Discord-Community_Channel-5865F2?style=for-the-badge&logo=discord&logoColor=white&labelColor=101010)](https://discord.gg/eh7BFDB)
-*
+
+-
