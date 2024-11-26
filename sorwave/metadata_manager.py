@@ -111,7 +111,7 @@ def previw_fix_metadata(file_path):
 
     return old_metadata, new_metadata
 
-def backup(file_path, backup_file):
+def recover_metadata(file_path, backup_file):
     """
     Restores the metadata of the specified audio file from a backup JSON file.
     Args:
