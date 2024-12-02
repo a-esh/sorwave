@@ -1,6 +1,6 @@
 import os 
 import platform
-from .logger import gen_log, new_log_file
+from .logger import generate_log, new_log_file
 from progress.bar import Bar
 from win32com.client import Dispatch
 
@@ -88,7 +88,7 @@ def sort_song(file_path, library_path):
         print(sorter_log)
     """
 
-    song_data = gen_log(file_path, library_path,  False)
+    song_data = generate_log(file_path, library_path,  False)
     artist = list(song_data.keys())[0]
     album = list(song_data[artist].keys())[0]
     song = song_data[artist][album][0]
@@ -142,7 +142,7 @@ def sort_library(folder_path):
     sorter_log = {}
     folder_path = os.path.abspath(folder_path)
     print('Getting songs data:')
-    music_library = gen_log(folder_path, False)
+    music_library = generate_log(folder_path, False)
     print('\nSorting songs:')
     total_songs = 0
     

@@ -59,7 +59,7 @@ def new_log_file(folder_path, log_dict, log_type, sorter_log=None):
     if os.name == 'nt':
         os.system(f'attrib +h "{log_path}"')
 
-def gen_log(path, library_path=False , gen_log=True):
+def generate_log(path, library_path=False , gen_log=True):
     def gen_log(path, library_path=False, gen_log=True):
         """
         Generates a log of song metadata from a given directory or file path.
