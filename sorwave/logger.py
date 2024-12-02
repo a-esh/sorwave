@@ -60,21 +60,20 @@ def new_log_file(folder_path, log_dict, log_type, sorter_log=None):
         os.system(f'attrib +h "{log_path}"')
 
 def generate_log(path, library_path=False , gen_log=True):
-    def gen_log(path, library_path=False, gen_log=True):
-        """
-        Generates a log of song metadata from a given directory or file path.
-        Args:
-            path (str): The path to the directory or file to process.
-            library_path (str, optional): The path where the log files will be saved. Defaults to False.
-            gen_log (bool, optional): Whether to generate log files. Defaults to True.
-        Returns:
-            dict: A dictionary containing the song metadata log.
-        The function processes all `.flac` and `.mp3` files in the specified directory or file path.
-        It extracts metadata from each song file and organizes it by artist and album.
-        If metadata errors are encountered, they are logged separately.
-        Example:
-            song_log = gen_log('/path/to/music/library')
-        """
+    """
+    Generates a log of song metadata from a given directory or file path.
+    Args:
+        path (str): The path to the directory or file to process.
+        library_path (str, optional): The path where the log files will be saved. Defaults to False.
+        generate_log (bool, optional): Whether to generate log files. Defaults to True.
+    Returns:
+        dict: A dictionary containing the song metadata log.
+    The function processes all `.flac` and `.mp3` files in the specified directory or file path.
+    It extracts metadata from each song file and organizes it by artist and album.
+    If metadata errors are encountered, they are logged separately.
+    Example:
+        song_log = generate_log('/path/to/music/library')
+    """
 
     def process_file(file_path, song_log, bugs_log):
         song_metadata = get_metadata(file_path)
