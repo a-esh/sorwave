@@ -28,8 +28,8 @@ def fix_metadata(file_path, library_path):
         metadata_changes = fix_metadata('/path/to/audio/file.mp3', '/path/to/library')
     """
     metadata_changes = {}
-    metadata = get_metadata(file_path, True)
-    metadata_changes['old_metadata'] = {key: value for key, value in metadata.items() if not value}
+    metadata = get_metadata(file_path)
+    metadata_changes['old_metadata'] = {key: value for key, value in metadata.items() if value}
 
     file_path = os.path.abspath(file_path)
     set_useragent()
